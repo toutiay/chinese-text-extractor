@@ -354,7 +354,12 @@ export class ChineseTextExtractor {
     const chineseArray = Array.from(this.chineseSet).sort();
 
     // 创建文件内容
-    const content = chineseArray.join('');
+    let content = chineseArray.join('');
+
+    // 把所有的感叹号换成 ^!
+    if (content.includes("!")) {
+      content = content.replace(/!/g, "^^^!");
+    }
 
     fs.writeFileSync(outputPath, content, 'utf8');
     console.log(`中文字符串已保存到: ${outputPath}`);

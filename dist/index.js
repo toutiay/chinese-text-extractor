@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.quickExtract = exports.extractChineseText = exports.ChineseTextExtractor = void 0;
+exports.extractChineseText = exports.ChineseTextExtractor = void 0;
+exports.quickExtract = quickExtract;
 var ChineseTextExtractor_1 = require("./ChineseTextExtractor");
 Object.defineProperty(exports, "ChineseTextExtractor", { enumerable: true, get: function () { return ChineseTextExtractor_1.ChineseTextExtractor; } });
 Object.defineProperty(exports, "extractChineseText", { enumerable: true, get: function () { return ChineseTextExtractor_1.extractChineseText; } });
@@ -54,7 +55,6 @@ function quickExtract(config = {}) {
         throw error;
     }
 }
-exports.quickExtract = quickExtract;
 // 如果直接运行此文件，执行快速提取
 if (require.main === module) {
     quickExtract();

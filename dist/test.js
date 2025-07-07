@@ -3,7 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createTestFiles = exports.runTest = void 0;
+exports.runTest = runTest;
+exports.createTestFiles = createTestFiles;
 const ChineseTextExtractor_1 = require("./ChineseTextExtractor");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
@@ -11,12 +12,11 @@ const path_1 = __importDefault(require("path"));
 function createTestFiles() {
     console.log('💡 提示: 现在直接测试指定目录，不创建测试文件');
 }
-exports.createTestFiles = createTestFiles;
 // 运行测试
 function runTest() {
     console.log('🧪 开始运行测试...\n');
     // 测试目录
-    const testDir = 'E:/Work/cocos/shanhai/cocosegertspace/stonespace/assets/';
+    const testDir = 'D:/project/dgr/qshop/proj_qshop/assets/';
     // 检查测试目录是否存在
     if (!fs_1.default.existsSync(testDir)) {
         console.log('❌ 测试目录不存在:', testDir);
@@ -48,7 +48,6 @@ function runTest() {
         console.log(fileContent);
     }
 }
-exports.runTest = runTest;
 // 如果直接运行此文件，执行测试
 if (require.main === module) {
     runTest();

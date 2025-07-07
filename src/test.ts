@@ -12,7 +12,7 @@ function runTest() {
   console.log('🧪 开始运行测试...\n');
   
   // 测试目录
-  const testDir = 'E:/Work/cocos/shanhai/cocosegertspace/stonespace/assets/';
+  const testDir = 'D:/project/dgr/qshop/proj_qshop/assets/';
   
   // 检查测试目录是否存在
   if (!fs.existsSync(testDir)) {

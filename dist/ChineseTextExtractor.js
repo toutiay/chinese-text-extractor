@@ -3,7 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.extractChineseText = exports.ChineseTextExtractor = void 0;
+exports.ChineseTextExtractor = void 0;
+exports.extractChineseText = extractChineseText;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const parser_1 = require("@babel/parser");
@@ -321,7 +322,11 @@ class ChineseTextExtractor {
         const outputPath = path_1.default.join(this.outputDir, this.outputFileName);
         const chineseArray = Array.from(this.chineseSet).sort();
         // 创建文件内容
-        const content = chineseArray.join('');
+        let content = chineseArray.join('');
+        // 把所有的感叹号换成 ^!
+        if (content.includes("!")) {
+            content = content.replace(/!/g, "^^^!");
+        }
         fs_1.default.writeFileSync(outputPath, content, 'utf8');
         console.log(`中文字符串已保存到: ${outputPath}`);
         console.log(`共提取到 ${chineseArray.length} 个不重复的中文字符串`);
@@ -345,5 +350,4 @@ function extractChineseText(folderPath, outputDir, outputFileName) {
     const extractor = new ChineseTextExtractor(outputDir, outputFileName);
     extractor.extractChineseFromFolder(folderPath);
 }
-exports.extractChineseText = extractChineseText;
 //# sourceMappingURL=ChineseTextExtractor.js.map
