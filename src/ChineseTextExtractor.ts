@@ -360,6 +360,7 @@ export class ChineseTextExtractor {
     if (content.includes("!")) {
       content = content.replace(/!/g, "^^^!");
     }
+    content += "+";
 
     fs.writeFileSync(outputPath, content, 'utf8');
     console.log(`中文字符串已保存到: ${outputPath}`);
