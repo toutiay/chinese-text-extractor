@@ -153,7 +153,15 @@ export class ChineseTextExtractor {
    * 递归访问TypeScript节点
    */
   private visitTsNode(node: ts.Node): void {
+    // 检查普通字符串字面量
     if (ts.isStringLiteral(node) && this.containsChinese(node.text)) {
+      if (this.shouldIncludeTsString(node)) {
+        this.addChineseString(node.text);
+      }
+    }
+
+    // 检查模板字符串（无替换变量的模板字面量）
+    if (ts.isNoSubstitutionTemplateLiteral(node) && this.containsChinese(node.text)) {
       if (this.shouldIncludeTsString(node)) {
         this.addChineseString(node.text);
       }
@@ -355,12 +363,8 @@ export class ChineseTextExtractor {
 
     // 创建文件内容
     let content = chineseArray.join('');
-
-    // 把所有的感叹号换成 ^!
-    if (content.includes("!")) {
-      content = content.replace(/!/g, "^^^!");
-    }
     content += "+";
+    content += "^^^!"
 
     fs.writeFileSync(outputPath, content, 'utf8');
     console.log(`中文字符串已保存到: ${outputPath}`);

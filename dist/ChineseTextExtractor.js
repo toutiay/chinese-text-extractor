@@ -137,7 +137,14 @@ class ChineseTextExtractor {
      * 递归访问TypeScript节点
      */
     visitTsNode(node) {
+        // 检查普通字符串字面量
         if (typescript_1.default.isStringLiteral(node) && this.containsChinese(node.text)) {
+            if (this.shouldIncludeTsString(node)) {
+                this.addChineseString(node.text);
+            }
+        }
+        // 检查模板字符串（无替换变量的模板字面量）
+        if (typescript_1.default.isNoSubstitutionTemplateLiteral(node) && this.containsChinese(node.text)) {
             if (this.shouldIncludeTsString(node)) {
                 this.addChineseString(node.text);
             }
@@ -323,11 +330,8 @@ class ChineseTextExtractor {
         const chineseArray = Array.from(this.chineseSet).sort();
         // 创建文件内容
         let content = chineseArray.join('');
-        // 把所有的感叹号换成 ^!
-        if (content.includes("!")) {
-            content = content.replace(/!/g, "^^^!");
-        }
         content += "+";
+        content += "^^^!";
         fs_1.default.writeFileSync(outputPath, content, 'utf8');
         console.log(`中文字符串已保存到: ${outputPath}`);
         console.log(`共提取到 ${chineseArray.length} 个不重复的中文字符串`);
