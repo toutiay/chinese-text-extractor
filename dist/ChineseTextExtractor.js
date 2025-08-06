@@ -330,8 +330,13 @@ class ChineseTextExtractor {
         const chineseArray = Array.from(this.chineseSet).sort();
         // 创建文件内容
         let content = chineseArray.join('');
-        content += "+";
-        content += "^^^!";
+        // 把所有的感叹号换成 ^!
+        if (content.includes("!")) {
+            content = content.replace(/!/g, `^^^!`);
+        }
+        if (content.includes(`"`)) {
+            content = content.replace(/"/g, `""`);
+        }
         fs_1.default.writeFileSync(outputPath, content, 'utf8');
         console.log(`中文字符串已保存到: ${outputPath}`);
         console.log(`共提取到 ${chineseArray.length} 个不重复的中文字符串`);

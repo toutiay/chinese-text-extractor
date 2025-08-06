@@ -363,8 +363,13 @@ export class ChineseTextExtractor {
 
     // 创建文件内容
     let content = chineseArray.join('');
-    content += "+";
-    content += "^^^!"
+    // 把所有的感叹号换成 ^!
+    if (content.includes("!")) {
+      content = content.replace(/!/g, `^^^!`);
+    }
+    if (content.includes(`"`)) {
+      content = content.replace(/"/g, `""`);
+    }
 
     fs.writeFileSync(outputPath, content, 'utf8');
     console.log(`中文字符串已保存到: ${outputPath}`);
