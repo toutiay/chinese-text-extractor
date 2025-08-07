@@ -10,6 +10,7 @@ const path_1 = __importDefault(require("path"));
 const parser_1 = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
 const typescript_1 = __importDefault(require("typescript"));
+const pako_1 = __importDefault(require("pako"));
 class ChineseTextExtractor {
     constructor(outputDir, outputFileName = 'chinese_texts.txt') {
         this.chineseSet = new Set();
@@ -48,7 +49,11 @@ class ChineseTextExtractor {
                 }
                 else if (file.endsWith('.json')) {
                     console.log(`处理JSON文件: ${file}`);
-                    this.extractChineseFromJsonFile(file);
+                    this.extractChineseFromJsonFile(file, false);
+                }
+                else if (file.endsWith('.bin')) {
+                    console.log(`处理bin文件: ${file}`);
+                    this.extractChineseFromJsonFile(file, true);
                 }
             }
             catch (error) {
@@ -83,7 +88,7 @@ class ChineseTextExtractor {
      * 判断是否为目标文件类型
      */
     isTargetFile(filename) {
-        return filename.endsWith('.ts') || filename.endsWith('.js') || filename.endsWith('.prefab') || filename.endsWith('.json');
+        return filename.endsWith('.ts') || filename.endsWith('.js') || filename.endsWith('.prefab') || filename.endsWith('.json') || filename.endsWith('.bin');
     }
     /**
      * 检查字符串是否包含中文
@@ -237,11 +242,29 @@ class ChineseTextExtractor {
     /**
      * 提取JSON文件中的中文
      */
-    extractChineseFromJsonFile(filePath) {
+    extractChineseFromJsonFile(filePath, decompress) {
         try {
-            const content = fs_1.default.readFileSync(filePath, 'utf8');
-            const jsonData = JSON.parse(content);
-            this.extractChineseFromObject(jsonData);
+            if (decompress) {
+                const content = fs_1.default.readFileSync(filePath);
+                const data = content instanceof ArrayBuffer
+                    ? new Uint8Array(content)
+                    : content;
+                let decompressed;
+                if (data.length >= 2 && data[0] === 0x78) {
+                    // zlib格式（带头部）
+                    decompressed = pako_1.default.inflate(data, { to: 'string' });
+                }
+                else {
+                    // 原始deflate格式
+                    decompressed = pako_1.default.inflateRaw(data, { to: 'string' });
+                }
+                this.extractChineseFromObject(JSON.parse(decompressed));
+            }
+            else {
+                const content = fs_1.default.readFileSync(filePath, 'utf8');
+                const jsonData = JSON.parse(content);
+                this.extractChineseFromObject(jsonData);
+            }
         }
         catch (error) {
             console.error(`解析JSON文件 ${filePath} 时出错:`, error);
